@@ -56,6 +56,20 @@ group by Name
 order by genre_appearance desc
 
 
+--track genre in percentage
+create view v_track_count as
+select 
+count(*) as track_count
+from Track t 
+
+select
+v_g.Name,
+round(v_g.genre_appearance*1.0/v_t.track_count*100, 2) as percentage_of_total
+from v_genre_appearance v_g
+cross join v_track_count v_t
+group by v_g.Name
+order by v_g.genre_appearance desc
+
 
 
 
