@@ -28,3 +28,14 @@ on ad.AlbumId = t.AlbumId
 GROUP BY ad.Artist_name
 ORDER BY Artist_profit DESC 
 LIMIT 5
+
+--who report to who
+select
+e.FirstName ||" "|| e.LastName as supervisor,
+e2.FirstName ||" "||e2.LastName as employee
+from Employee e
+join Employee e2 
+on e.EmployeeId = e2.ReportsTo 
+
+
+
