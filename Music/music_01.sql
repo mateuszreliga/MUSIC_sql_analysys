@@ -71,6 +71,43 @@ group by v_g.Name
 order by v_g.genre_appearance desc
 
 
+--basic analysys minutes by Genre
+select distinct
+t.GenreId,
+round(avg(t.Milliseconds) over (partition by t.GenreId)/1000.0/60, 2) as avg_min,
+round(min(t.Milliseconds) over (partition by t.GenreId)/1000.0/60, 2) as min_min,
+round(max(t.Milliseconds) over (partition by t.GenreId)/1000.0/60, 2) as max_min
+from Track t 
+
+--there are some track with less than 1 minute so let's check how much are that kind of trucks
+create view v_track_in_minutes as
+select
+Name ,
+GenreId ,
+round(Milliseconds / 1000.0 / 60, 2) as minutes
+from Track t 
+order by Milliseconds 
+
+--step 1:
+--check percentile 10% ERROR to check
+--select
+--PERCENTILE_CONT(0.1) within group (order by vtim.minutes) over() as 01_per
+--from v_track_in_minutes vtim 
+
+create view v_min_feature as
+select
+*,
+case
+	when minutes < 1 then "less then minute"
+	when minutes >= 1 then "over minute"
+end as min_feature
+from v_track_in_minutes vtim 
+
+select DISTINCT 
+min_feature,
+COUNT(*) over (order by min_feature) as min_feature_count
+from v_min_feature
+
 
 
 
